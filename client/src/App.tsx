@@ -12,6 +12,7 @@ import {
   ChatBubbleOutline,
   PeopleAltOutlined,
   StarOutlineRounded,
+  TextSnippet,
   VillaOutlined,
 } from '@mui/icons-material';
 import dataProvider from '@pankod/refine-simple-rest';
@@ -56,7 +57,7 @@ const App = () => {
 
       // Save user to MongoDB
       if (profileObj) {
-        const response = await fetch('http://localhost:8080/api/v1/users', {
+        const response = await fetch('https://nawat-dashboard.vercel.app/api/v1/users', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -122,7 +123,7 @@ const App = () => {
       <GlobalStyles styles={{ html: { WebkitFontSmoothing: 'auto' } }} />
       <RefineSnackbarProvider>
         <Refine
-          dataProvider={dataProvider('http://localhost:8080/api/v1')}
+          dataProvider={dataProvider('https://nawat-dashboard.vercel.app/api/v1')}
           notificationProvider={notificationProvider}
           ReadyPage={ReadyPage}
           catchAll={<ErrorComponent />}
@@ -136,7 +137,7 @@ const App = () => {
               show: PropertyDetails,
               create: CreateProperty,
               edit: EditProperty,
-              icon: <VillaOutlined />,
+              icon: <TextSnippet />,
             },
             {
               name: 'agents', // LINK
