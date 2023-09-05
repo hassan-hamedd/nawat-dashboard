@@ -47,7 +47,7 @@ const getUserInfoByID = async (req, res) => {
 const getExpertInfoByID = async (req, res) => {
   try {
     const { id } = req.params;
-    const userProperties = await Expert.findOne({ _id: id }).populate('allProperties');
+    const userProperties = await Expert.findOne({ _id: id });
 
     if (userProperties) res.status(200).json(userProperties);
     else res.status(404).send('User not found');
