@@ -12,6 +12,10 @@ router
   .get(getAllUsers);
 
 router
+  .route('/experts')
+  .get(getAllExperts)
+
+router
   .route('/')
   .post(createUser);
 
@@ -22,9 +26,5 @@ router
 router
   .route("/create-expert")
   .post(createExpert)
-
-router
-  .route('/experts')
-  .get(getAllExperts)
 
 export default router;
