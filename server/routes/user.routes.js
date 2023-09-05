@@ -2,7 +2,7 @@ import express from 'express';
 
 import {
   createExpert,
-  createUser, getAllExperts, getAllUsers, getUserInfoByID,
+  createUser, getAllExperts, getAllUsers, getExpertInfoByID, getUserInfoByID,
 } from '../controller/user.controller.js';
 
 const router = express.Router();
@@ -14,6 +14,10 @@ router
 router
   .route('/experts')
   .get(getAllExperts)
+
+  router
+  .route('/experts/:id')
+  .get(getExpertInfoByID)
 
 router
   .route('/')

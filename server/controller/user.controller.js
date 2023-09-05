@@ -44,6 +44,18 @@ const getUserInfoByID = async (req, res) => {
   }
 };
 
+const getExpertInfoByID = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userProperties = await Expert.findOne({ _id: id }).populate('allProperties');
+
+    if (userProperties) res.status(200).json(userProperties);
+    else res.status(404).send('User not found');
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to get expert data, please try again later' });
+  }
+};
+
 const getAllExperts = async (req, res) => {
   try {
     const users = await Expert.find({}).limit(req.query._end);
@@ -151,6 +163,7 @@ export {
   getAllUsers,
   createUser,
   getUserInfoByID,
+  getExpertInfoByID,
   createExpert,
   getAllExperts
 };
