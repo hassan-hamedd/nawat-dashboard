@@ -53,7 +53,7 @@ const Form = ({ type, register, handleSubmit, handleImageChange, formLoading, ha
           <FormControl>
             <FormHelperText sx={{ fontWeight: 500, margin: '10px 0', fontSize: 16, color: '#11142D' }}>Blog English Content</FormHelperText>
             <TextareaAutosize
-              disable={language === "arabic"}
+              disabled={language === "arabic"}
               minRows={5}
               required
               placeholder="Write blog content"

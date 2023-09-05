@@ -42,8 +42,113 @@ const getUserInfoByID = async (req, res) => {
   }
 };
 
+const createExpert = async (req, res) => {
+  console.log(req.body)
+  let {
+          email,
+          password,
+          fullName,
+          title,
+          location,
+          description,
+          photo,
+          offeredServices,
+          gender,
+          age,
+      } = req.body;
+  email = email.trim();
+  password = password.trim();
+  fullName = fullName.trim();
+  title = title.trim(),
+  location = location.trim();
+  description = description.trim();
+  photo = photo.trim();
+  gender = gender.trim();
+
+  let createdAt = new Date();
+
+  if(email === '' || password === '' || fullName === '' || title === '' || location === '' || description === '' || photo === '' || gender === '') {
+      return res.status(400).json({
+          status: 'Failed',
+          message: 'All fields are required'
+      });
+  } else if(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email) === false) {
+      return res.status(400).json({
+          status: 'Failed',
+          message: 'Invalid email'
+      });
+  } else if(password.length < 8) {
+      return res.status(400).json({
+          status: 'Failed',
+          message: 'Password must be at least 8 characters long'
+      });
+  } else {
+      // Check if email already exists
+      Expert.find({ email })
+          .then(user => {
+              if(user.length > 0) {
+                  return res.status(400).json({
+                      status: 'Failed',
+                      message: 'Email already exists'
+                  });
+              } else {
+                  // Create new user
+
+                  // Hash password
+                  const saltRounds = 10;
+                  bcrypt.hash(password, saltRounds)
+                      .then(hashedPassword => {
+                          const newExpert = new Expert({
+                              email,
+                              password: hashedPassword,
+                              createdAt,
+                              lastLogin: createdAt,
+                              fullName,
+                              photo,
+                              offeredServices,
+                              gender,
+                              age,
+                          });
+
+                          newExpert.save()
+                              .then(user => {
+                                  const token = generateToken(user);
+                                  return res.status(200).json({
+                                      status: 'Success',
+                                      message: 'Registration successful',
+                                      data: {
+                                          user,
+                                          token
+                                      }
+                                  });
+                              })
+                              .catch(err => {
+                                  return res.status(400).json({
+                                      status: 'Failed',
+                                      message: err
+                                  });
+                              });
+                      })
+                      .catch(err => {
+                          return res.status(400).json({
+                              status: 'Failed',
+                              message: err
+                          });
+                      });
+              }
+          })
+          .catch(err => {
+              return res.status(400).json({
+                  status: 'Failed',
+                  message: err
+              });
+          });
+  }
+};
+
 export {
   getAllUsers,
   createUser,
   getUserInfoByID,
+  createExpert
 };

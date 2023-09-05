@@ -1,6 +1,7 @@
 import express from 'express';
 
 import {
+  createExpert,
   createUser, getAllUsers, getUserInfoByID,
 } from '../controller/user.controller.js';
 
@@ -17,5 +18,9 @@ router
 router
   .route('/:id')
   .get(getUserInfoByID);
+
+router
+  .route("/create-expert")
+  .post(createExpert)
 
 export default router;
