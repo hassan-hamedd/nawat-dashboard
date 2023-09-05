@@ -21,6 +21,11 @@ const PropertySchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  keywords: {
+    type: [String],
+    default: [],
+    required: true
+  },
   photo: {
     type: String,
     required: true,

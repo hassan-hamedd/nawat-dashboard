@@ -64,8 +64,11 @@ const getPropertyDetail = async (req, res) => {
 const createProperty = async (req, res) => {
   try {
     const {
-      title, englishText, arabicText, language, readTime, photo, email,
+      title, language, readTime, keywords, photo, email,
     } = req.body;
+
+    const arabicText = req.body.arabicText ? req.body.arabicText : ""; 
+    const englishText = req.body.englishText ? req.body.englishText : ""; 
 
     // Start a new session
     const session = await mongoose.startSession();
@@ -84,9 +87,10 @@ const createProperty = async (req, res) => {
       {
         title,
         englishText,
-        arabicText,
+        arabicText: arabicText ? arabicText : "",
         language,
         readTime,
+        keywords,
         photo: photoUrl.url,
         creator: user._id,
       },

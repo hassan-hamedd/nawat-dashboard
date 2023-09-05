@@ -34,6 +34,7 @@ export interface FormProps {
     formLoading: boolean,
     handleSubmit: FormEventHandler<HTMLFormElement> | undefined,
     handleImageChange: (file) => void,
+    handleLanguageChange?: any,
     onFinishHandler: (data: FieldValues) => Promise<void>,
     propertyImage: { name: string, url: string },
 }
