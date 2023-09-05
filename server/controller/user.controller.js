@@ -2,6 +2,7 @@
 /* eslint-disable no-underscore-dangle */
 import Expert from '../mongodb/models/Expert.js';
 import User from '../mongodb/models/user.js';
+import bcrypt from "bcrypt";
 
 const getAllUsers = async (req, res) => {
   try {
@@ -57,14 +58,6 @@ const createExpert = async (req, res) => {
           gender,
           age,
       } = req.body;
-  email = email.trim();
-  password = password.trim();
-  fullName = fullName.trim();
-  title = title.trim(),
-  location = location.trim();
-  description = description.trim();
-  photo = photo.trim();
-  gender = gender.trim();
 
   let createdAt = new Date();
 
@@ -113,13 +106,11 @@ const createExpert = async (req, res) => {
 
                           newExpert.save()
                               .then(user => {
-                                  const token = generateToken(user);
                                   return res.status(200).json({
                                       status: 'Success',
                                       message: 'Registration successful',
                                       data: {
-                                          user,
-                                          token
+                                          user
                                       }
                                   });
                               })
