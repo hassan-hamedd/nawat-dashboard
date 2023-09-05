@@ -2,7 +2,7 @@ import express from 'express';
 
 import {
   createExpert,
-  createUser, getAllUsers, getUserInfoByID,
+  createUser, getAllExperts, getAllUsers, getUserInfoByID,
 } from '../controller/user.controller.js';
 
 const router = express.Router();
@@ -22,5 +22,9 @@ router
 router
   .route("/create-expert")
   .post(createExpert)
+
+router
+  .route('/experts')
+  .get(getAllExperts)
 
 export default router;

@@ -44,6 +44,15 @@ const getUserInfoByID = async (req, res) => {
   }
 };
 
+const getAllExperts = async (req, res) => {
+  try {
+    const users = await Expert.find({}).limit(req.query._end);
+    res.status(200).json(users);
+  } catch (err) {
+    res.status(500).json({ message: 'Fetching users failed, please try again later' });
+  }
+};
+
 const createExpert = async (req, res) => {
   console.log(req.body)
   let {
@@ -142,5 +151,6 @@ export {
   getAllUsers,
   createUser,
   getUserInfoByID,
-  createExpert
+  createExpert,
+  getAllExperts
 };
