@@ -5,20 +5,20 @@ const PropertySchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  description: {
+  englishText: {
     type: String,
     required: true,
   },
-  propertyType: {
+  arabicText: {
     type: String,
     required: true,
   },
-  location: {
+  language: {
     type: String,
     required: true,
   },
-  price: {
-    type: Number,
+  readTime: {
+    type: String,
     required: true,
   },
   photo: {
@@ -31,6 +31,6 @@ const PropertySchema = new mongoose.Schema({
   },
 });
 
-const propertyModel = mongoose.model('Property', PropertySchema);
+const propertyModel = mongoose.model('Blog', PropertySchema);
 
 export default propertyModel;

@@ -64,7 +64,7 @@ const getPropertyDetail = async (req, res) => {
 const createProperty = async (req, res) => {
   try {
     const {
-      title, description, propertyType, location, price, photo, email,
+      title, englishText, arabicText, language, readTime, photo, email,
     } = req.body;
 
     // Start a new session
@@ -83,10 +83,10 @@ const createProperty = async (req, res) => {
     const newProperty = await Property.create(
       {
         title,
-        description,
-        propertyType,
-        location,
-        price,
+        englishText,
+        arabicText,
+        language,
+        readTime,
         photo: photoUrl.url,
         creator: user._id,
       },
