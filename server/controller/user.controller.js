@@ -1,5 +1,6 @@
 /* eslint-disable consistent-return */
 /* eslint-disable no-underscore-dangle */
+import Expert from '../mongodb/models/Expert.js';
 import User from '../mongodb/models/user.js';
 
 const getAllUsers = async (req, res) => {
