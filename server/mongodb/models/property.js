@@ -7,11 +7,11 @@ const PropertySchema = new mongoose.Schema({
   },
   englishText: {
     type: String,
-    required: true,
+    required: false,
   },
   arabicText: {
     type: String,
-    required: true,
+    required: false,
   },
   language: {
     type: String,
