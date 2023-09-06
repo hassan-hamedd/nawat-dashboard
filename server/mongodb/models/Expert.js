@@ -16,6 +16,21 @@ const ExpertSchema = new Schema({
     }],
     gender: String || null,
     age: Number || null,
+    chats: [{
+        chatId: {
+            type: Schema.Types.ObjectId,
+            ref: 'Chat', // Reference to the Chat model
+        },
+        participants: [{
+            userId: {
+                type: Schema.Types.ObjectId,
+                ref: 'User', // Reference to the User model
+            },
+            userPhoto: String,
+        }],
+        lastMessage: String,
+        lastMessageDate: Date,
+    }],
     lastLogin: Date,
     createdAt: Date,
 });

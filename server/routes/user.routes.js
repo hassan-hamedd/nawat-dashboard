@@ -1,6 +1,7 @@
 import express from 'express';
 
 import {
+  createChat,
   createExpert,
   createUser, getAllExperts, getAllUsers, getExpertInfoByID, getUserInfoByID,
 } from '../controller/user.controller.js';
@@ -18,6 +19,10 @@ router
   router
   .route('/experts/:id')
   .get(getExpertInfoByID)
+
+router
+  .route('/create-chat')
+  .post(createChat)
 
 router
   .route('/')
