@@ -4,6 +4,7 @@ import Expert from '../mongodb/models/Expert.js';
 import User from '../mongodb/models/user.js';
 import Chat from '../mongodb/models/Chat.js';
 import bcrypt from "bcrypt";
+import { io } from '../index.js';
 
 const getAllUsers = async (req, res) => {
   try {
@@ -176,7 +177,7 @@ const createChat = async (req, res) => {
       return res.status(404).json({ message: 'User not found.' });
     }
 
-    // Create a new Chat document
+    // Create a new Chat document with data for both expert and user
     const chat = new Chat({
       participants: [
         {
@@ -186,7 +187,7 @@ const createChat = async (req, res) => {
         },
         {
           userId,
-          userPhoto: "https://previews.123rf.com/images/yupiramos/yupiramos1609/yupiramos160912725/62358447-avatar-woman-smiling-cartoon-female-person-user-vector-illustration.jpg",
+          userPhoto: "https://media.sciencephoto.com/f0/28/50/59/f0285059-800px-wm.jpg",
         },
       ],
       messages: [],
@@ -216,7 +217,7 @@ const createChat = async (req, res) => {
       participants: [
         {
           userId,
-          userPhoto: "https://previews.123rf.com/images/yupiramos/yupiramos1609/yupiramos160912725/62358447-avatar-woman-smiling-cartoon-female-person-user-vector-illustration.jpg",
+          userPhoto: "https://media.sciencephoto.com/f0/28/50/59/f0285059-800px-wm.jpg",
         },
       ],
       lastMessage: null,
@@ -226,15 +227,158 @@ const createChat = async (req, res) => {
     user.chats.push(userChatObject);
     expert.chats.push(expertChatObject);
 
+    // Save the updated user and expert objects
     await user.save();
     await expert.save();
 
-    return res.status(200).json({ message: 'Chat created successfully.' });
+    return res.status(200).json({ status: "Success", message: 'Chat created successfully.' });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: 'Internal Server Error' });
+    return res.status(500).json({ message: `Internal Server Error,\n${error}` });
   }
 };
+
+const getUserChats = async (req, res) => {
+  try {
+    const { userId, userType } = req.params;
+
+    // Check if the provided userType is 'User' or 'Expert'
+    if (userType !== 'User' && userType !== 'Expert') {
+      return res.status(400).json({ message: 'Invalid userType.' });
+    }
+
+    // Find the user by userId
+    let user;
+    if (userType === 'User') {
+      user = await User.findById(userId);
+    } else {
+      user = await Expert.findById(userId);
+    }
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    // Get the chats based on the userType
+    const chats = user.chats;
+
+    return res.status(200).json({ status: "Success", chats });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Internal Server Error.' });
+  }
+};
+
+const getChatMessages = async (req, res) => {
+  try {
+    const { chatId } = req.params;
+
+    // Find the chat by chatId
+    const chat = await Chat.findById(chatId);
+
+    if (!chat) {
+      return res.status(404).json({ message: 'Chat not found.' });
+    }
+
+    // Return the messages of the chat
+    const messages = chat.messages;
+
+    return res.status(200).json({ status: 'Success', messages });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Internal Server Error.' });
+  }
+};
+
+const sendMessage = async (req, res) => {
+  try {
+    const { chatId, senderId, senderType, text } = req.body;
+
+    // Find the chat by chatId
+    const chat = await Chat.findById(chatId);
+
+    if (!chat) {
+      return res.status(404).json({ message: 'Chat not found.' });
+    }
+
+    // Create a new message object
+    const message = {
+      senderId,
+      senderType,
+      text,
+    };
+
+    // Add the message to the chat's messages array
+    chat.messages.push(message);
+
+    // Save the updated chat
+    await chat.save();
+
+    // Emit the new message to all connected clients in the chat room
+    io.to(chatId).emit('newMessage', message);
+
+    return res.status(200).json({ status: 'Success', message: 'Message sent successfully.', messageData: message });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Internal Server Error.' });
+  }
+};
+
+const signInExpert = async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({
+      status: 'Failed',
+      message: 'Email and password are required',
+    });
+  }
+
+  // Check if the user with the provided email exists
+  Expert.findOne({ email })
+    .then((user) => {
+      if (!user) {
+        return res.status(404).json({
+          status: 'Failed',
+          message: 'The Expert was not found',
+        });
+      }
+
+      // Compare the provided password with the hashed password in the database
+      bcrypt.compare(password, user.password)
+        .then((isMatch) => {
+          if (isMatch) {
+            // Passwords match, create a token for authentication (you can use a JWT library here)
+
+            return res.status(200).json({
+              status: 'Success',
+              message: 'Login successful',
+              data: {
+                user,
+              },
+            });
+          } else {
+            return res.status(401).json({
+              status: 'Failed',
+              message: 'Incorrect password',
+            });
+          }
+        })
+        .catch((err) => {
+          return res.status(500).json({
+            status: 'Failed',
+            message: 'Internal server error',
+          });
+        });
+    })
+    .catch((err) => {
+      return res.status(500).json({
+        status: 'Failed',
+        message: 'Internal server error',
+      });
+    });
+};
+
 
 export {
   getAllUsers,
@@ -244,4 +388,8 @@ export {
   createExpert,
   getAllExperts,
   createChat,
+  getUserChats,
+  getChatMessages,
+  sendMessage,
+  signInExpert
 };

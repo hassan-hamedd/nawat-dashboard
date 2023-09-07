@@ -26,22 +26,19 @@ const chatSchema = new mongoose.Schema({
       expertId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Expert', // Replace with the actual name of your Expert model
-        required: true,
+        // required: true,
       },
       expertFullName: {
         type: String,
-        required: true,
+        // required: true,
       },
       expertPhoto: String,
-    },
-    {
       userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User', // Replace with the actual name of your User model
-        required: true,
       },
       userPhoto: String,
-    },
+    }
   ],
   messages: [messageSchema], // Messages array schema
   chatCreationDate: {
