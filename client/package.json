@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@date-io/date-fns": "^2.17.0",
     "@mui/icons-material": "^5.8.3",
+    "@mui/lab": "^5.0.0-alpha.143",
     "@pankod/refine-cli": "^1.2.0",
     "@pankod/refine-core": "^3.18.0",
     "@pankod/refine-inferencer": "^2.0.2",
@@ -19,6 +21,7 @@
     "axios": "^0.26.1",
     "react": "^18.2.0",
     "react-apexcharts": "^1.4.0",
+    "react-calendar": "^4.6.0",
     "react-dom": "^18.2.0",
     "react-scripts": "^5.0.0",
     "web-vitals": "^1.1.1"
