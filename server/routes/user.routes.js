@@ -5,7 +5,7 @@ import {
   createAppointment,
   createChat,
   createExpert,
-  createUser, getAllExperts, getAllUsers, getChatMessages, getExpertInfoByID, getUserAppointments, getUserChats, getUserInfoByID, sendMessage, signInExpert,
+  createUser, getAllExperts, getAllUsers, getChatMessages, getExpertInfoByID, getUserAppointments, getUserChats, getUserInfoByID, purchaseCourse, sendMessage, signInExpert,
 } from '../controller/user.controller.js';
 
 const router = express.Router();
@@ -29,6 +29,10 @@ router
 router
   .route('/confirm-appointment/:appointmentId')
   .get(confirmAppointmentLink)
+
+router
+  .route('/purchase-course')
+  .post(purchaseCourse)
 
 router
   .route('/create-chat')

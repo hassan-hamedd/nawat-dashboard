@@ -56,6 +56,10 @@ const UserSchema = new mongoose.Schema({
     appointmentDate: Date,
     appointmentCreationDate: Date,
   }],
+  hasUserPurchasedCourse: {
+    type: Boolean,
+    default: false
+  },
   allProperties: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Property',
