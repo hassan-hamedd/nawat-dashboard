@@ -1,9 +1,11 @@
 import express from 'express';
 
 import {
+  confirmAppointmentLink,
+  createAppointment,
   createChat,
   createExpert,
-  createUser, getAllExperts, getAllUsers, getChatMessages, getExpertInfoByID, getUserChats, getUserInfoByID, sendMessage, signInExpert,
+  createUser, getAllExperts, getAllUsers, getChatMessages, getExpertInfoByID, getUserAppointments, getUserChats, getUserInfoByID, sendMessage, signInExpert,
 } from '../controller/user.controller.js';
 
 const router = express.Router();
@@ -21,6 +23,14 @@ router
   .get(getExpertInfoByID)
 
 router
+  .route('/get-appointments/:userId/:userType')
+  .get(getUserAppointments)
+
+router
+  .route('/confirm-appointment/:appointmentId')
+  .get(confirmAppointmentLink)
+
+router
   .route('/create-chat')
   .post(createChat)
 
@@ -31,6 +41,10 @@ router
 router
   .route('/expert-login')
   .post(signInExpert)
+
+router
+  .route('/create-appointment')
+  .post(createAppointment)
 
 router
   .route('/get-chats/:userId/:userType')

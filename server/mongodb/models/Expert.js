@@ -31,6 +31,24 @@ const ExpertSchema = new Schema({
         lastMessage: String,
         lastMessageDate: Date,
     }],
+    appointments: [{
+        appointmentId: {
+            type: Schema.Types.ObjectId,
+            ref: 'Appointment', // Reference to the Appointmend model
+        },
+        participants: [{
+            userId: {
+                type: Schema.Types.ObjectId,
+                ref: 'User', // Reference to the User model
+            },
+        }],
+        appointmentDate: Date,
+        appointmentCreationDate: Date,
+    }],
+    userType: {
+        type: String,
+        default: "Expert"
+    },
     lastLogin: Date,
     createdAt: Date,
 });

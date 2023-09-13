@@ -5,6 +5,7 @@ import User from '../mongodb/models/user.js';
 import Chat from '../mongodb/models/Chat.js';
 import bcrypt from "bcrypt";
 import { io } from '../index.js';
+import Appointment from '../mongodb/models/Appointment.js';
 
 const getAllUsers = async (req, res) => {
   try {
@@ -238,6 +239,78 @@ const createChat = async (req, res) => {
   }
 };
 
+const createAppointment = async (req, res) => {
+  try {
+    const { expertId, userId, appointmentDate } = req.body;
+
+    // Retrieve expert data from the database using expertId
+    const expert = await Expert.findById(expertId);
+    if (!expert) {
+      return res.status(404).json({ message: 'Expert not found.' });
+    }
+
+    // Retrieve user data from the database using userId
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    // Create a new Chat document with data for both expert and user
+    const appointment = new Appointment({
+      participants: [
+        {
+          expertId,
+          expertFullName: expert.fullName,
+        },
+        {
+          userId,
+        },
+      ],
+      appointmentCreationDate: new Date(),
+      appointmentDate
+    });
+
+    // Save the chat document to MongoDB
+    await appointment.save();
+
+    // Update user's and expert's chats arrays
+    const userAppointmentObject = {
+      appointmentId: appointment._id,
+      participants: [
+        {
+          expertId,
+          expertFullName: expert.fullName,
+        },
+      ],
+      appointmentDate: appointment.appointmentDate,
+      appointmentCreationDate: appointment.appointmentCreationDate,
+    };
+
+    const expertAppointmentObject = {
+      appointmentId: appointment._id,
+      participants: [
+        {
+          userId,
+        },
+      ],
+      appointmentDate: appointment.appointmentDate,
+      appointmentCreationDate: appointment.appointmentCreationDate,
+    };
+
+    user.appointments.push(userAppointmentObject);
+    expert.appointments.push(expertAppointmentObject);
+
+    // Save the updated user and expert objects
+    await user.save();
+    await expert.save();
+
+    return res.status(200).json({ status: "Success", message: 'Appointment created successfully.' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: `Internal Server Error,\n${error}` });
+  }
+};
+
 const getUserChats = async (req, res) => {
   try {
     const { userId, userType } = req.params;
@@ -269,6 +342,37 @@ const getUserChats = async (req, res) => {
   }
 };
 
+const getUserAppointments = async (req, res) => {
+  try {
+    const { userId, userType } = req.params;
+
+    // Check if the provided userType is 'User' or 'Expert'
+    if (userType !== 'User' && userType !== 'Expert') {
+      return res.status(400).json({ message: 'Invalid userType.' });
+    }
+
+    // Find the user by userId
+    let user;
+    if (userType === 'User') {
+      user = await User.findById(userId);
+    } else {
+      user = await Expert.findById(userId);
+    }
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    // Get the chats based on the userType
+    const appointments = user.appointments;
+
+    return res.status(200).json({ status: "Success", appointments });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Internal Server Error.' });
+  }
+};
+
 const getChatMessages = async (req, res) => {
   try {
     const { chatId } = req.params;
@@ -287,6 +391,24 @@ const getChatMessages = async (req, res) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: 'Internal Server Error.' });
+  }
+};
+
+const confirmAppointmentLink = async (req, res) => {
+  try {
+    const { appointmentId } = req.params;
+
+    // Find the chat by chatId
+    const appointment = await Appointment.findById(appointmentId);
+
+    if (!appointment) {
+      return res.status(404).json({ status: 'Failed', message: 'Appointment not found.' });
+    }
+
+    return res.status(200).json({ status: 'Success', message: 'Appointment Found' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ status: 'Failed', message: 'Internal Server Error.' });
   }
 };
 
@@ -388,7 +510,10 @@ export {
   createExpert,
   getAllExperts,
   createChat,
+  createAppointment,
   getUserChats,
+  getUserAppointments,
+  confirmAppointmentLink,
   getChatMessages,
   sendMessage,
   signInExpert

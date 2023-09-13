@@ -41,6 +41,21 @@ const UserSchema = new mongoose.Schema({
     lastMessage: String,
     lastMessageDate: Date,
   }],
+  appointments: [{
+    appointmentId: {
+        type: Schema.Types.ObjectId,
+        ref: 'Appointment', // Reference to the Appointmend model
+    },
+    participants: [{
+        expertId: {
+            type: Schema.Types.ObjectId,
+            ref: 'User', // Reference to the User model
+        },
+        expertFullName: String
+    }],
+    appointmentDate: Date,
+    appointmentCreationDate: Date,
+  }],
   allProperties: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Property',
